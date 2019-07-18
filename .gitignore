@@ -1,8 +1,8 @@
-env
+.DS_Store
 
 #python
+env
 __pycache__
-
 
 #game
 result
