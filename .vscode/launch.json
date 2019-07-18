@@ -1,0 +1,19 @@
+{
+  "configurations": [
+    {
+      "name": "Local Runner",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/localrunner.py",
+      "console": "integratedTerminal",
+      "args": ["-p1", "python bot.py"]
+    },
+    {
+      "name": "Bot",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/bot.py",
+      "console": "integratedTerminal",
+    }
+  ]
+}
