@@ -1,1 +1,11 @@
 env
+
+#python
+__pycache__
+
+
+#game
+result
+scores.json
+visio.gz
+*.log.gz
