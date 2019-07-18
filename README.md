@@ -16,3 +16,8 @@ IF you would like to run your bot implementation here is command:
  python localrunner.py -p1 "python bot.py"
 
 ```
+
+To run linting command
+```bash
+make lint
+```
