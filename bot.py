@@ -1,10 +1,11 @@
+'''
+Paperio bot implementation.
+'''
 import json
 import random
 
-config = input()
-
 while True:
-    state = input()
-    commands = ['left', 'right', 'up', 'down']
-    cmd = random.choice(commands)
-    print(json.dumps({"command": cmd, 'debug': cmd})
+    STATE = input()
+    COMMANDS = ['left', 'right', 'up', 'down']
+    CMD = random.choice(COMMANDS)
+    print(json.dumps({"command": CMD, 'debug': str(STATE)}))
