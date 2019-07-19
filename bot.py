@@ -10,8 +10,6 @@ RIGHT = 'right'
 DOWN = 'down'
 
 
-def 
-
 def process_tick(state):
     '''
     Define direction for each tick
