@@ -8,4 +8,4 @@ __pycache__
 result
 scores.json
 visio.gz
-*.log.gz
+*.log.*
