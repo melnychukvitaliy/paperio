@@ -27,7 +27,7 @@ def is_in_trace(move_x, move_y, trace):
     'Define whether move is in track'
 
     for trace_x, trace_y in trace:
-        if trace_x - move_x == 0 and trace_y - move_y == 0:
+        if -30 <= trace_x - move_x < WIDTH and -30 <= trace_y - move_y < WIDTH:
             return True
 
     return False
