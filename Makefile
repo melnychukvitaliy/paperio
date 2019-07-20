@@ -1,5 +1,5 @@
 lint:
-	pylint bot.py -ry
+	pylint -r y paperio
 
 run:
-	python localrunner.py -p1 "python bot.py" -p2 keyboard
+	python localrunner.py -p1 "python bot.py"
