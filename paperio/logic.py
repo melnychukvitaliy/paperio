@@ -9,7 +9,7 @@ LEFT = 'left'
 RIGHT = 'right'
 DOWN = 'down'
 
-BORDER = 630
+BORDER = 900
 WIDTH = 30
 
 
@@ -35,7 +35,7 @@ def is_in_trace(move_x, move_y, trace):
 
 def is_in_border(move_x, move_y):
     'Define whether move is in border'
-    return BORDER - move_y == 0 or BORDER - move_x == 0
+    return not (0 < move_x < BORDER and 0 < move_y < BORDER)
 
 
 def moves_min_max(state):
@@ -72,4 +72,5 @@ def process_tick(state):
     '''
     moves = moves_min_max(state)
     cmd = direction(moves)
-    return send(cmd, current_player(state)['position'])
+    return send(cmd, {'position': current_player(state)['position'],
+                      'lines': current_player(state)['lines']})

@@ -2,6 +2,7 @@
     "python.pythonPath": "env/bin/python",
     "cSpell.words": [
         "Paperio",
-        "pylint"
+        "pylint",
+        "pytest"
     ]
 }
