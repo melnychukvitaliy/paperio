@@ -51,6 +51,7 @@ def moves_min_max(state):
         is_not_trace = not is_in_trace(next_x, next_y, player['lines'])
         return random.randrange(10) if is_not_border and is_not_trace else 0
 
+    # TODO check the second layer as we have to use 2 moves to change direction
     return {
         UP: move(current_x, current_y + WIDTH),
         DOWN: move(current_x, current_y - WIDTH),
