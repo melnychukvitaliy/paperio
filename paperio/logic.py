@@ -27,7 +27,7 @@ def is_in_trace(move_x, move_y, trace):
     'Define whether move is in track'
 
     for trace_x, trace_y in trace:
-        if -30 <= trace_x - move_x < WIDTH and -30 <= trace_y - move_y < WIDTH:
+        if 0 <= abs(trace_x - move_x) < WIDTH and 0 <= abs(trace_y - move_y) < WIDTH:
             return True
 
     return False
@@ -73,4 +73,4 @@ def process_tick(state):
     moves = moves_min_max(state)
     cmd = direction(moves)
     return send(cmd, {'position': current_player(state)['position'],
-                      'lines': current_player(state)['lines']})
+                      'moves': moves})

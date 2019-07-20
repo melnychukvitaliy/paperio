@@ -5,6 +5,7 @@ from logic import is_in_border, is_in_trace
 
 @pytest.mark.parametrize("move_x,move_y,expected", [
     (855, 15, False),
+    (30, 30, False),
     (855, -15, True),
     (0, 0, True),
     (900, 900, True),
