@@ -38,9 +38,33 @@ def is_in_border(move_x, move_y):
     return not (0 < move_x < BORDER and 0 < move_y < BORDER)
 
 
-def score():
-    'Numeric presentation of way'
-    return random.randrange(10)
+def near_territory_point(state, move_x, move_y):
+    'Respond with numeric presentation how long your move from territory'
+    player = current_player(state)
+    near = 0
+
+    for territory_x, territory_y in player['territory']:
+        new_near = abs(territory_x - move_x) + abs(territory_y - move_y)
+        if new_near < near:
+            near = new_near
+
+    return near
+
+
+def score(state, x_change, y_change):
+    'Numeric presentation how this way is good'
+
+    player = current_player(state)
+    current_x, current_y = player['position']
+
+    next_x = current_x + x_change
+    next_y = current_y + y_change
+    near = near_territory_point(state, next_x, next_y)
+    numeric_score = random.randrange(10)
+    if near > 0:
+        numeric_score = near if near < 100 else BORDER * 2 - near
+
+    return numeric_score
 
 
 def is_avaliable_move(next_x, next_y, lines):
@@ -60,7 +84,7 @@ def predict_score(state, x_change, y_change):
         return is_avaliable_move(
             current_x + x_change * level, current_y + y_change * level, player['lines'])
 
-    return score() if level_move(1) and level_move(2) else 0
+    return score(state, x_change, y_change) if level_move(1) and level_move(2) else 0
 
 
 def moves_min_max(state):
@@ -89,4 +113,6 @@ def process_tick(state):
     moves = moves_min_max(state)
     cmd = direction(moves)
     return send(cmd, {'position': current_player(state)['position'],
-                      'moves': moves})
+                      'moves': moves,
+                      'territory': current_player(state)['territory']
+                      })
