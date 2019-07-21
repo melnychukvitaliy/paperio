@@ -38,25 +38,40 @@ def is_in_border(move_x, move_y):
     return not (0 < move_x < BORDER and 0 < move_y < BORDER)
 
 
+def score():
+    'Numeric presentation of way'
+    return random.randrange(10)
+
+
+def is_avaliable_move(next_x, next_y, lines):
+    'Check whether point is available to move'
+    is_not_border = not is_in_border(next_x, next_y)
+    is_not_trace = not is_in_trace(next_x, next_y, lines)
+    return is_not_border and is_not_trace
+
+
+def predict_score(state, x_change, y_change):
+    'Return numeric score prediction. This is using few steps based on x and y changes'
+    player = current_player(state)
+    current_x, current_y = player['position']
+
+    def level_move(level):
+        'Multiply changes for particular layer'
+        return is_avaliable_move(
+            current_x + x_change * level, current_y + y_change * level, player['lines'])
+
+    return score() if level_move(1) and level_move(2) else 0
+
+
 def moves_min_max(state):
     '''
     Heuristics functionality to calculate score
     '''
-    player = current_player(state)
-    current_x, current_y = player['position']
-
-    def move(next_x, next_y):
-        'Get direction based on borders and trace'
-        is_not_border = not is_in_border(next_x, next_y)
-        is_not_trace = not is_in_trace(next_x, next_y, player['lines'])
-        return random.randrange(10) if is_not_border and is_not_trace else 0
-
-    # TODO check the second layer as we have to use 2 moves to change direction
     return {
-        UP: move(current_x, current_y + WIDTH),
-        DOWN: move(current_x, current_y - WIDTH),
-        LEFT:  move(current_x - WIDTH, current_y),
-        RIGHT: move(current_x + WIDTH, current_y),
+        UP: predict_score(state, 0, WIDTH),
+        DOWN:  predict_score(state, 0, -WIDTH),
+        LEFT: predict_score(state, -WIDTH, 0),
+        RIGHT: predict_score(state, WIDTH, 0)
     }
 
 
