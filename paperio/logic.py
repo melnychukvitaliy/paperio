@@ -2,7 +2,6 @@
 Entry point for all logic paperio bot. This file is using in bot.py
 '''
 import json
-import random
 
 UP = 'up'
 LEFT = 'left'
@@ -33,9 +32,9 @@ def is_in_trace(move_x, move_y, trace):
     return False
 
 
-def is_in_border(move_x, move_y):
+def is_in_border(point):
     'Define whether move is in border'
-    return not (0 < move_x < BORDER and 0 < move_y < BORDER)
+    return point <= 0 or point >= BORDER
 
 
 def near_territory_point(state, move_x, move_y):
@@ -51,40 +50,28 @@ def near_territory_point(state, move_x, move_y):
     return near
 
 
-def score(state, x_change, y_change):
+# TODO add calculation
+def score(state, move_x, move_y):
     'Numeric presentation how this way is good'
+    return 10
 
+
+def up_direction(state):
+    'score prediction once you are going to move forward'
     player = current_player(state)
     current_x, current_y = player['position']
+    y_change = current_y + WIDTH
 
-    next_x = current_x + x_change
-    next_y = current_y + y_change
-    near = near_territory_point(state, next_x, next_y)
-    numeric_score = random.randrange(10)
-    if near > 0:
-        numeric_score = near if near < 100 else BORDER * 2 - near
-
-    return numeric_score
+    return score(state, current_x, y_change) if not is_in_border(y_change) else 0
 
 
-def is_avaliable_move(next_x, next_y, lines):
-    'Check whether point is available to move'
-    is_not_border = not is_in_border(next_x, next_y)
-    is_not_trace = not is_in_trace(next_x, next_y, lines)
-    return is_not_border and is_not_trace
-
-
-def predict_score(state, x_change, y_change):
-    'Return numeric score prediction. This is using few steps based on x and y changes'
+def left_direction(state):
+    'score prediction once you are going to move left side'
     player = current_player(state)
     current_x, current_y = player['position']
+    x_change = current_x - WIDTH
 
-    def level_move(level):
-        'Multiply changes for particular layer'
-        return is_avaliable_move(
-            current_x + x_change * level, current_y + y_change * level, player['lines'])
-
-    return score(state, x_change, y_change) if level_move(1) and level_move(2) else 0
+    return score(state, x_change, current_y) if not is_in_border(x_change) else 0
 
 
 def moves_min_max(state):
@@ -92,10 +79,10 @@ def moves_min_max(state):
     Heuristics functionality to calculate score
     '''
     return {
-        UP: predict_score(state, 0, WIDTH),
-        DOWN:  predict_score(state, 0, -WIDTH),
-        LEFT: predict_score(state, -WIDTH, 0),
-        RIGHT: predict_score(state, WIDTH, 0)
+        UP: up_direction(state),
+        DOWN:  0,  # TODO: add direction calculation
+        LEFT: left_direction(state),
+        RIGHT: 0  # TODO: add direction calculation
     }
 
 
@@ -113,6 +100,7 @@ def process_tick(state):
     moves = moves_min_max(state)
     cmd = direction(moves)
     return send(cmd, {'position': current_player(state)['position'],
+                      'cmd': cmd,
                       'moves': moves,
                       'territory': current_player(state)['territory']
                       })

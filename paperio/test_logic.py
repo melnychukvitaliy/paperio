@@ -1,17 +1,17 @@
 # pylint: disable=missing-docstring
 import pytest
-from logic import is_in_border, is_in_trace
+from logic import is_in_border, is_in_trace, direction
 
 
-@pytest.mark.parametrize("move_x,move_y,expected", [
-    (855, 15, False),
-    (30, 30, False),
-    (855, -15, True),
-    (0, 0, True),
-    (900, 900, True),
+@pytest.mark.parametrize("move,expected", [
+    (855, False),
+    (30, False),
+    (900, True),
+    (915, True),
+    (0, True),
 ])
-def test_is_in_border(move_x, move_y, expected):
-    assert is_in_border(move_x, move_y) == expected
+def test_is_in_border(move, expected):
+    assert is_in_border(move) == expected
 
 
 @pytest.mark.parametrize("move_x,move_y,lines,expected", [
@@ -27,3 +27,17 @@ def test_is_in_border(move_x, move_y, expected):
 ])
 def test_is_in_trace(move_x, move_y, lines, expected):
     assert is_in_trace(move_x, move_y, lines) == expected
+
+
+@pytest.mark.parametrize("min_max_scores,expected", [
+    ({
+        'left': 10,
+        'right': 10
+    }, 'left'),
+    ({
+        'left': 10,
+        'right': 11
+    }, 'right'),
+])
+def test_direction(min_max_scores, expected):
+    assert direction(min_max_scores) == expected
