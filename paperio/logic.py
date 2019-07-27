@@ -57,6 +57,61 @@ def score(state, move_x, move_y):
     return 10
 
 
+def moves_count(from_point, to_point, state):
+    'respond with count of moved you need to get point'
+    from_x, from_y = from_point
+
+    points_map = build_map(state, to_point)
+    point_x, point_y = point_to_map(from_x, from_y)
+
+    return points_map[point_x][point_y]
+
+
+def point_to_map(point_x, point_y):
+    'respond with map position for point'
+    return [
+        ((point_x - WIDTH / 2) / WIDTH),
+        ((point_y - WIDTH / 2) / WIDTH)
+    ]
+
+
+def build_map(state, to_point):
+    'build a map to find right direction and calculate score'
+    player = current_player(state)
+
+    to_x, to_y = to_point
+    points_map = [[None] * CELLS_COUNT for i in range(CELLS_COUNT)]
+
+    # add obstacles
+    for trace_x, trace_y in player['lines']:
+        point_x, point_y = point_to_map(trace_x, trace_y)
+        points_map[point_x][point_y] = 0
+
+    # start from destination
+    point_x, point_y = point_to_map(to_x, to_y)
+    points_map[point_x][point_y] = 1
+    return build_near_map_points(points_map, point_x, point_y)
+
+
+def build_near_map_points(points_map, point_x, point_y):
+    'build near scores for points map. recursively call for every point '
+    current_score = points_map[point_x][point_y]
+
+    def add_next_point_score(points_map, point_x, point_y):
+        'near point score calculations'
+        if points_map[point_x][point_y] and points_map[point_x][point_y] is None:
+            points_map[point_x][point_y] = current_score + 1
+            return build_near_map_points(points_map, point_x, point_y)
+        return points_map
+
+    points_map = add_next_point_score(point_to_map, point_x + 1, point_y)
+    points_map = add_next_point_score(point_to_map, point_x - 1, point_y)
+    points_map = add_next_point_score(point_to_map, point_x, point_y + 1)
+    points_map = add_next_point_score(point_to_map, point_x, point_y - 1)
+
+    return points_map
+
+
 def y_direction(state, next_y):
     'score prediction once you are going to move forward or backward'
     player = current_player(state)
