@@ -4,11 +4,12 @@ from logic import is_in_border, is_in_trace, direction
 
 
 @pytest.mark.parametrize("move,expected", [
-    (855, False),
+    (200, False),
     (30, False),
-    (900, True),
+    (610, True),
     (915, True),
     (0, True),
+    (10, True),
 ])
 def test_is_in_border(move, expected):
     assert is_in_border(move) == expected
@@ -16,14 +17,9 @@ def test_is_in_border(move, expected):
 
 @pytest.mark.parametrize("move_x,move_y,lines,expected", [
     (855, 15, [], False),
-    (230, 200, [[400, 300], [230, 300]], False),
-    (855, 25, [[400, 300], [815, 0]], False),
+    (855, 25, [[25, 855]], False),
+    (230, 200, [[400, 300], [230, 200]], True),
     (855, 15, [[855, 15]], True),
-    (855, 15, [[865, 15]], True),
-    (855, 15, [[855, 15]], True),
-    (855, 15, [[845, 0]], True),
-
-
 ])
 def test_is_in_trace(move_x, move_y, lines, expected):
     assert is_in_trace(move_x, move_y, lines) == expected

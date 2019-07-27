@@ -8,8 +8,9 @@ LEFT = 'left'
 RIGHT = 'right'
 DOWN = 'down'
 
-BORDER = 900
-WIDTH = 30
+# TODO: get from game object
+CELLS_COUNT = 31
+WIDTH = 20
 
 
 def send(cmd, msg):
@@ -26,7 +27,7 @@ def is_in_trace(move_x, move_y, trace):
     'Define whether move is in track'
 
     for trace_x, trace_y in trace:
-        if 0 <= abs(trace_x - move_x) < WIDTH and 0 <= abs(trace_y - move_y) < WIDTH:
+        if trace_x == move_x and trace_y == move_y:
             return True
 
     return False
@@ -34,7 +35,7 @@ def is_in_trace(move_x, move_y, trace):
 
 def is_in_border(point):
     'Define whether move is in border'
-    return point <= 0 or point >= BORDER
+    return point <= WIDTH / 2 or point >= (CELLS_COUNT * WIDTH) - WIDTH / 2
 
 
 def near_territory_point(state, move_x, move_y):
@@ -56,33 +57,38 @@ def score(state, move_x, move_y):
     return 10
 
 
-def up_direction(state):
-    'score prediction once you are going to move forward'
+def y_direction(state, next_y):
+    'score prediction once you are going to move forward or backward'
     player = current_player(state)
-    current_x, current_y = player['position']
-    y_change = current_y + WIDTH
+    current_x, _ = player['position']
+    is_available_move = not is_in_border(next_y) and not is_in_trace(
+        current_x, next_y, player['lines'])
 
-    return score(state, current_x, y_change) if not is_in_border(y_change) else 0
+    return score(state, current_x, next_y) if is_available_move else 0
 
 
-def left_direction(state):
-    'score prediction once you are going to move left side'
+def x_direction(state, next_x):
+    'score prediction once you are going to move forward or backward'
     player = current_player(state)
-    current_x, current_y = player['position']
-    x_change = current_x - WIDTH
+    _, current_y = player['position']
+    is_available_move = not is_in_border(next_x) and not is_in_trace(
+        next_x, current_y, player['lines'])
 
-    return score(state, x_change, current_y) if not is_in_border(x_change) else 0
+    return score(state, next_x, current_y) if is_available_move else 0
 
 
 def moves_min_max(state):
     '''
     Heuristics functionality to calculate score
     '''
+    player = current_player(state)
+    current_x, current_y = player['position']
+
     return {
-        UP: up_direction(state),
-        DOWN:  0,  # TODO: add direction calculation
-        LEFT: left_direction(state),
-        RIGHT: 0  # TODO: add direction calculation
+        UP: y_direction(state, current_y + WIDTH),
+        DOWN:  y_direction(state, current_y - WIDTH),
+        LEFT: x_direction(state, current_x - WIDTH),
+        RIGHT: x_direction(state, current_x + WIDTH)
     }
 
 
