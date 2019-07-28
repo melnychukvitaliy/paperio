@@ -51,13 +51,17 @@ def near_territory_point(state, move_x, move_y):
     return near
 
 
-# TODO add calculation
-def score(state, move_x, move_y):
+def score(state, from_point, to_point):
     'Numeric presentation how this way is good'
-    return 10
+    player = current_player(state)
+    moves_weight = 0.1
+    if len(player['lines']) > 5:
+        moves_weight = 1
+
+    return 10 + moves_weight * moves_count(state, from_point, to_point)
 
 
-def moves_count(from_point, to_point, state):
+def moves_count(state, from_point, to_point):
     'respond with count of moved you need to get point'
     from_x, from_y = from_point
 
@@ -70,8 +74,8 @@ def moves_count(from_point, to_point, state):
 def point_to_map(point_x, point_y):
     'respond with map position for point'
     return [
-        ((point_x - WIDTH / 2) / WIDTH),
-        ((point_y - WIDTH / 2) / WIDTH)
+        int(round((point_x - WIDTH / 2) / WIDTH)),
+        int(round((point_y - WIDTH / 2) / WIDTH))
     ]
 
 
@@ -90,6 +94,7 @@ def build_map(state, to_point):
     # start from destination
     point_x, point_y = point_to_map(to_x, to_y)
     points_map[point_x][point_y] = 1
+
     return build_near_map_points(points_map, point_x, point_y)
 
 
@@ -104,10 +109,10 @@ def build_near_map_points(points_map, point_x, point_y):
             return build_near_map_points(points_map, point_x, point_y)
         return points_map
 
-    points_map = add_next_point_score(point_to_map, point_x + 1, point_y)
-    points_map = add_next_point_score(point_to_map, point_x - 1, point_y)
-    points_map = add_next_point_score(point_to_map, point_x, point_y + 1)
-    points_map = add_next_point_score(point_to_map, point_x, point_y - 1)
+    points_map = add_next_point_score(points_map, point_x + 1, point_y)
+    points_map = add_next_point_score(points_map, point_x - 1, point_y)
+    points_map = add_next_point_score(points_map, point_x, point_y + 1)
+    points_map = add_next_point_score(points_map, point_x, point_y - 1)
 
     return points_map
 
@@ -119,7 +124,7 @@ def y_direction(state, next_y):
     is_available_move = not is_in_border(next_y) and not is_in_trace(
         current_x, next_y, player['lines'])
 
-    return score(state, current_x, next_y) if is_available_move else 0
+    return score(state, [current_x, next_y], player['territory'][0]) if is_available_move else 0
 
 
 def x_direction(state, next_x):
@@ -129,7 +134,7 @@ def x_direction(state, next_x):
     is_available_move = not is_in_border(next_x) and not is_in_trace(
         next_x, current_y, player['lines'])
 
-    return score(state, next_x, current_y) if is_available_move else 0
+    return score(state, [next_x, current_y], player['territory'][0]) if is_available_move else 0
 
 
 def moves_min_max(state):
