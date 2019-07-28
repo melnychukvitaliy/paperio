@@ -93,7 +93,9 @@ def build_map(state, to_point):
 
     # start from destination
     point_x, point_y = point_to_map(to_x, to_y)
-    points_map[point_x][point_y] = 1
+    points_map[point_x][point_y] = 0
+
+    # TODO add queue with points
 
     return build_near_map_points(points_map, point_x, point_y)
 
@@ -104,9 +106,9 @@ def build_near_map_points(points_map, point_x, point_y):
 
     def add_next_point_score(points_map, point_x, point_y):
         'near point score calculations'
-        if points_map[point_x][point_y] and points_map[point_x][point_y] is None:
+        is_available = 0 <= point_x < CELLS_COUNT and 0 <= point_y < CELLS_COUNT
+        if is_available and points_map[point_x][point_y] is None:
             points_map[point_x][point_y] = current_score + 1
-            return build_near_map_points(points_map, point_x, point_y)
         return points_map
 
     points_map = add_next_point_score(points_map, point_x + 1, point_y)

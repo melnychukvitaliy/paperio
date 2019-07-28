@@ -1,6 +1,6 @@
 # pylint: disable=missing-docstring
 import pytest
-from logic import is_in_border, is_in_trace, direction, point_to_map
+from logic import is_in_border, is_in_trace, direction, point_to_map, moves_count
 
 
 @pytest.mark.parametrize("move,expected", [
@@ -46,3 +46,19 @@ def test_direction(min_max_scores, expected):
 ])
 def test_point_to_map(point_x, point_y, expected):
     assert point_to_map(point_x, point_y) == expected
+
+
+@pytest.mark.parametrize("from_point,to_point,expected", [
+    ([110, 210], [110, 190], 1),
+])
+def test_moves_count(from_point, to_point, expected):
+
+    assert moves_count({
+        'params': {
+            'players': {
+                'i': {
+                    'lines': []
+                }
+            }
+        }
+    }, from_point, to_point) == expected
